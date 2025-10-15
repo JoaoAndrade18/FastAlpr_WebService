@@ -1,0 +1,6 @@
+Django
+djangorestframework
+opencv-python-headless
+ultralytics  
+fast-alpr[onnx-gpu]       
+gunicorn      

@@ -1,4 +1,3 @@
-# alpr_api/views.py
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -6,6 +5,8 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from drf_spectacular.utils import extend_schema
 
 from .alpr_integration import alpr_service
+
+import time
 
 @extend_schema(
     request={
@@ -25,6 +26,7 @@ from .alpr_integration import alpr_service
     responses={200: {'type': 'object'}},
     description="POST multipart/form-data com a chave 'images' (pode repetir para enviar várias)."
 )
+
 class ALPRProcessView(APIView):
     parser_classes = (MultiPartParser, FormParser)
 
@@ -34,7 +36,12 @@ class ALPRProcessView(APIView):
             return Response({'error': "Envie arquivos na chave 'images'."}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
+            start = time.time()
+
             results = alpr_service.process_images(images)
+            end = time.time()
+            print("Tempo de execução da view ALPRProcessView:", (end - start), "segundos")
             return Response({'results': results}, status=status.HTTP_200_OK)
         except Exception:
             return Response({'No results': ""}, status=status.HTTP_200_OK)
+        

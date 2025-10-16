@@ -13,7 +13,7 @@ class FastALPR:
             ocr_model="cct-xs-v1-global-model",
         )
         self.auxLabelPlateDetector = YOLO('best_placa.pt')
-
+        
     def fix_plate(self, text):
         def L(ch): return ch.isalpha()
         def N(ch): return ch.isdigit()
@@ -76,7 +76,8 @@ class FastALPR:
                 text = alpr_results[0].ocr.text
                 raw = alpr_results[0].to_dict() if hasattr(alpr_results[0], "to_dict") else str(alpr_results[0])
             else:
-                raw = str(alpr_results)
+                text = ""
+                raw = alpr_results
             
             # --- Fixes inclusion of invalid characters ---
             text = self.fix_plate(text)

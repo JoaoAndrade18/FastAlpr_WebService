@@ -6,8 +6,6 @@ from drf_spectacular.utils import extend_schema
 
 from .alpr_integration import alpr_service
 
-import time
-
 @extend_schema(
     request={
         'multipart/form-data': {
@@ -17,30 +15,26 @@ import time
                 'images': {
                     'type': 'array',
                     'items': {'type': 'string', 'format': 'binary'},
-                    'description': "Envie um ou mais arquivos usando a mesma chave 'images'."
+                    'description': "Send one or more files using the same key 'images'."
                 }
             },
             'required': ['images']
         }
     },
     responses={200: {'type': 'object'}},
-    description="POST multipart/form-data com a chave 'images' (pode repetir para enviar várias)."
+    description="POST multipart/form-data with key 'images' and one or more files",
 )
 
 class ALPRProcessView(APIView):
     parser_classes = (MultiPartParser, FormParser)
 
-    def post(self, request, *args, **kwargs):
+    def post(self, request):
         images = request.FILES.getlist('images')
         if not images:
-            return Response({'error': "Envie arquivos na chave 'images'."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error': "Send archive with key 'images'"}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
-            start = time.time()
-
             results = alpr_service.process_images(images)
-            end = time.time()
-            print("Tempo de execução da view ALPRProcessView:", (end - start), "segundos")
             return Response({'results': results}, status=status.HTTP_200_OK)
         except Exception:
             return Response({'No results': ""}, status=status.HTTP_200_OK)

@@ -2,5 +2,5 @@ Django
 djangorestframework
 opencv-python-headless
 ultralytics  
-fast-alpr[onnx-gpu]       
-gunicorn      
+fast-alpr[onnx-gpu] # or fast-alpr[onnx] for CPU only
+gunicorn
